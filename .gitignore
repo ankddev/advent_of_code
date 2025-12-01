@@ -1,0 +1,6 @@
+# Cargo
+target/
+Cargo.lock
+
+# Don't commit input files
+input
