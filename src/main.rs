@@ -36,7 +36,7 @@ fn run_solution((stars, duration): (u32, Duration), solution: &Solution) -> (u32
         let (part1, part2) = wrapper(&data);
         let elapsed = instant.elapsed();
 
-        println!("{year} Day {day}");
+        println!("{year} Day {day} ({} ms)", elapsed.as_millis());
         println!("    Part 1: {part1}");
         println!("    Part 2: {part2}");
 
