@@ -1,12 +1,9 @@
 //! # Lobby
-//!
-//! Note that it's unoptimized too )
 
-type Input = Vec<Vec<u32>>;
+type Input = Vec<Vec<u8>>;
 
 pub fn parse(input: &str) -> Input {
     input
-        .trim()
         .lines()
         .map(|line| line.trim())
         .map(|bank| {
@@ -33,44 +30,23 @@ pub fn part2(input: &Input) -> u64 {
         .sum()
 }
 
-fn largest_joltage(bank: &Vec<u32>, n: usize) -> u64 {
-    let mut largest = 0u64;
+fn largest_joltage(bank: &Vec<u8>, limit: usize) -> u64 {
+    let mut max = 0;
+    let mut start = 0;
 
-    for (pos, _) in bank.iter().enumerate() {
-        // Generate all combinations of n elements starting from this position
-        let mut combo = Vec::with_capacity(n);
-        generate_combos(&bank[(pos)..], n, 0, &mut combo, &mut |digits: &[u32]| {
-            let mut joltage = 0u64;
-            for &digit in digits {
-                joltage = joltage * 10 + (digit as u64);
-            }
-            if joltage > largest {
-                largest = joltage;
+    (0..limit).fold(0, |joltage, digit| {
+        let end = bank.len() - limit + digit + 1;
+
+        (max, start) = (start..end).fold((0, 0), |(max, start), i| {
+            if bank[i] > max {
+                (bank[i], i + 1)
+            } else {
+                (max, start)
             }
         });
-    }
 
-    largest
-}
-
-// Helper function to generate all combinations of n digits
-fn generate_combos(
-    slice: &[u32],
-    n: usize,
-    start: usize,
-    current: &mut Vec<u32>,
-    process: &mut dyn FnMut(&[u32]),
-) {
-    if current.len() == n {
-        process(&current);
-        return;
-    }
-
-    for i in start..slice.len() {
-        current.push(slice[i]);
-        generate_combos(slice, n, i + 1, current, process);
-        current.pop();
-    }
+        10 * joltage + max as u64
+    })
 }
 
 #[cfg(test)]
