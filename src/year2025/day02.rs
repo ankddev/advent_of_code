@@ -1,23 +1,18 @@
 //! # Gift Shop
 
+use std::collections::HashSet;
+
+use crate::utils::parse::ParseOps;
+
 type Input = (u64, u64);
 type Ranges = Vec<(u64, u64)>;
 
 pub fn parse(input: &str) -> Input {
     let ranges = parse_ranges(input);
 
-    let mut invalid = Vec::with_capacity(100_000);
+    let part1 = sum(&ranges, &invalid_first_part());
 
-    invalid.extend(invalid_first_part());
-
-    let part1 = sum(&ranges, &invalid);
-
-    invalid.extend(invalid_second_part());
-
-    invalid.sort_unstable();
-    invalid.dedup();
-
-    let part2 = sum(&ranges, &invalid);
+    let part2 = sum(&ranges, &invalid_second_part());
 
     (part1, part2)
 }
@@ -46,7 +41,7 @@ fn invalid_first_part() -> Vec<u64> {
 }
 
 fn invalid_second_part() -> Vec<u64> {
-    let mut invalid = Vec::new();
+    let mut invalid = invalid_first_part();
 
     for digits in 2_u32..=10 {
         for size in 1..=digits / 2 {
@@ -63,18 +58,18 @@ fn invalid_second_part() -> Vec<u64> {
         }
     }
 
+    invalid.sort_unstable();
+    invalid.dedup();
+
     invalid
 }
 
 fn sum(input: &Ranges, invalid: &Vec<u64>) -> u64 {
+    let invalid_set: HashSet<u64> = invalid.iter().copied().collect();
     input
         .iter()
-        .map(|range| (range.0..=range.1).collect::<Vec<u64>>())
-        .flat_map(|range| {
-            range
-                .into_iter()
-                .filter(|id| invalid.binary_search(id).is_ok())
-        })
+        .flat_map(|r| r.0..=r.1)
+        .filter(|id| invalid_set.contains(id))
         .sum()
 }
 
@@ -83,12 +78,7 @@ fn parse_ranges(input: &str) -> Ranges {
         .trim()
         .split(",")
         .map(|range| {
-            crate::utils::iter::vec_to_tuple_2(
-                range
-                    .split("-")
-                    .map(|el| el.parse().expect("Couldn't parse number"))
-                    .collect(),
-            )
+            crate::utils::iter::vec_to_tuple_2(range.split("-").map(|el| el.unsigned()).collect())
         })
         .collect::<Vec<(u64, u64)>>()
 }
