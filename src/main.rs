@@ -78,5 +78,5 @@ macro_rules! year {
 }
 
 year!(year2025 "Year 2025"
-    day01, day02
+    day01, day02, day03
 );
