@@ -102,13 +102,13 @@ mod tests {
 
     #[test]
     fn part1_test() {
-        let mut input = parse(EXAMPLE);
-        assert_eq!(part1(&mut input), 13);
+        let input = parse(EXAMPLE);
+        assert_eq!(part1(&input), 13);
     }
 
     #[test]
     fn part2_test() {
-        let mut input = parse(EXAMPLE);
-        assert_eq!(part2(&mut input), 43);
+        let input = parse(EXAMPLE);
+        assert_eq!(part2(&input), 43);
     }
 }
